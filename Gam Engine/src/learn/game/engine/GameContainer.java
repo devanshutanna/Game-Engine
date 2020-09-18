@@ -25,28 +25,42 @@ public class GameContainer implements Runnable {
 		
 		boolean render = false;
 		double firstTime = 0;
-		double lastTime = System.nanoTime();		
+		double lastTime = System.nanoTime() / 1E9;		
 		double passedTime = 0;
 		double unprocessedTime = 0;
 		
+		double frameTime = 0;
+		int frames = 0;
+		int fps = 0;
+		
 		while(running) {
-			
+			// System.out.println("in run while");
 			render = false;
-			firstTime = System.nanoTime();
+			firstTime = System.nanoTime() / 1E9;
 			passedTime = firstTime - lastTime;
 			lastTime = firstTime;
 			
 			unprocessedTime += passedTime;
+			frameTime += passedTime;
 			
 			while(unprocessedTime >= UPDATE_CAP) {
 				unprocessedTime -= UPDATE_CAP;
 				render = true;
 				
 				// TODO: Update game
+				
+				if(frameTime >= 1.0) {
+					frameTime = 0;
+					fps = frames;
+					frames = 0;
+					
+					System.out.println("FPS: " + fps);
+				}
 			}
 			
 			if(render) {
 				// TODO: Render game
+				frames++;
 			}
 			else {
 				try {
@@ -62,5 +76,12 @@ public class GameContainer implements Runnable {
 	
 	private void dispose() {
 		
+	}
+	
+	public static void main(String[] args) {
+		GameContainer gc = new GameContainer();
+		gc.start();
+		gc.run();
+		System.out.println();
 	}
 }
